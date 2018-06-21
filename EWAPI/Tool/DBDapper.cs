@@ -10,11 +10,12 @@ using System.Threading.Tasks;
 
 namespace EWAPI.Tool
 {
-    public class DBDapper
+    public  class DBDapper
     {
+      
         //初始化连接对象
         public SqlConnection conn = null;
-        public DBDapper(IHostingEnvironment environment)
+        public  DBDapper(IHostingEnvironment environment)
         {
             var builder = new ConfigurationBuilder();
             builder.SetBasePath(environment.ContentRootPath).AddJsonFile("appsettings.json");

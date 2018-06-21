@@ -8,9 +8,25 @@ using System.Net.Http.Headers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using EWAPI.Tool;
+using System.Data;
 
 namespace EWAPI.Controllers
 {
+    public class Cambling
+    {
+      
+        public int id { get; set; }
+      
+        public string periods { get; set; }
+       
+        public string awardNum { get; set; }
+      
+        public int awardSum { get; set; }
+      
+        public string awardResult { get; set; }
+      
+        public DateTime awardTime { get; set; }
+    }
     public class ImageController : Controller
     {
         public IActionResult Index()
@@ -21,16 +37,25 @@ namespace EWAPI.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        private IHostingEnvironment hostingEnv;
+        DBDapper db = null;
+        private  IHostingEnvironment hostingEnv;
         public ImageController(IHostingEnvironment env)
         {
             this.hostingEnv = env;
+            db = new DBDapper(env);
+        }
+        [HttpGet]
+        [Route("Get")]
+        public IActionResult Get()
+        {
+   
+               var data = new DapperAsync(hostingEnv).GetList<Cambling>(" select * from Camblings ");
+            return  Json(new { data = data.Result });
         }
         [HttpPost]
         [Route("GetImage")]
         public IActionResult GetImage(int id, string ip, string cookie)
         {
-            DBDapper db = new DBDapper(hostingEnv);
             var data = db.GetInfoList<Images>("SELECT * FROM Images where id = " + id).FirstOrDefault();
             if (data != null)
             {
@@ -57,7 +82,6 @@ namespace EWAPI.Controllers
         [Route("Upload")]
         public IActionResult Upload()
         {
-            DBDapper db = new DBDapper(hostingEnv);
             if (Request.ContentLength > 0)
             {
                 var imgFile = Request.Form.Files[0];
